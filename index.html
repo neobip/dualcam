@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebRTC Front and Back Camera</title>
+</head>
+<body>
+    <h1>Front and Back Camera Demo</h1>
+    <video id="front-camera" autoplay></video>
+    <video id="back-camera" autoplay></video>
+
+    <script>
+        async function startCamera() {
+            try {
+                // Get access to the front and back cameras
+                const frontStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } });
+
+                // Set the streams as sources for the video elements
+                document.getElementById('front-camera').srcObject = frontStream;
+                document.getElementById('back-camera').srcObject = backStream;
+            } catch (error) {
+                console.error('Error accessing the camera:', error);
+            }
+        }
+
+        startCamera();
+    </script>
+</body>
+</html>
