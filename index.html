@@ -5,25 +5,42 @@
 </head>
 <body>
     <h1>Front and Back Camera Demo</h1>
-    <video id="front-camera" autoplay></video>
-    <video id="back-camera" autoplay></video>
+    <video id="camera" autoplay></video>
+    <button id="switch-button">Switch Camera</button>
 
     <script>
+        let currentCamera = 'user'; // 'user' represents the front camera, 'environment' represents the back camera
+        let stream;
+
         async function startCamera() {
             try {
-                // Get access to the front and back cameras
-                const frontStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } } });
-
-                // Set the streams as sources for the video elements
-                document.getElementById('front-camera').srcObject = frontStream;
-                document.getElementById('back-camera').srcObject = backStream;
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentCamera } });
+                document.getElementById('camera').srcObject = stream;
             } catch (error) {
                 console.error('Error accessing the camera:', error);
             }
         }
 
+        function switchCamera() {
+            if (currentCamera === 'user') {
+                currentCamera = 'environment';
+            } else {
+                currentCamera = 'user';
+            }
+            
+            // Stop the current stream
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            // Start the camera with the new facingMode
+            startCamera();
+        }
+
         startCamera();
+
+        // Add click event listener to the switch button
+        document.getElementById('switch-button').addEventListener('click', switchCamera);
     </script>
 </body>
 </html>
